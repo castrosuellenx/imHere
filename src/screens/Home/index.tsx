@@ -7,13 +7,16 @@ import {
   FlatList,
   Alert,
 } from 'react-native';
+import {format} from 'date-fns';
 
-import {styles} from './styles';
 import {Participant} from '../../components/Participant';
+import {styles} from './styles';
 
 export default function Home() {
   const [participants, setParticipants] = useState<string[]>([]);
   const [participantName, setParticipantName] = useState('');
+
+  const formattedDate = format(new Date(), 'EEEE, LLLL d, yyyy');
 
   function handleParticipantAdd() {
     if (participants.includes(participantName)) {
@@ -47,7 +50,7 @@ export default function Home() {
   return (
     <View style={styles.container}>
       <Text style={styles.eventName}>Event name</Text>
-      <Text style={styles.eventDate}>Thursday, September 15, 2022</Text>
+      <Text style={styles.eventDate}>{formattedDate}</Text>
 
       <View style={styles.form}>
         <TextInput
