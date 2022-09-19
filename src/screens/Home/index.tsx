@@ -1,47 +1,44 @@
+import React, {useState} from 'react';
 import {
   View,
   Text,
   TextInput,
   TouchableOpacity,
-  ScrollView,
   FlatList,
   Alert,
 } from 'react-native';
-import {StatusBar} from 'expo-status-bar';
 
 import {styles} from './styles';
 import {Participant} from '../../components/Participant';
 
 export default function Home() {
-  const participants = [
-    'Suellen',
-    'Rodrigo',
-    'Diego',
-    'Jake',
-    'Ana',
-    'Isa',
-    'Mayk',
-    'Jonathan',
-    'Maria',
-    'Joana',
-  ];
+  const [participants, setParticipants] = useState<string[]>([]);
+  const [participantName, setParticipantName] = useState('');
 
   function handleParticipantAdd() {
-    if (participants.includes('Rodrigo')) {
+    if (participants.includes(participantName)) {
       return Alert.alert(
         'Participant already exists',
         'There is already one participant with this name on the list.'
       );
     }
 
-    console.log('You clicked on the button');
+    if (!participantName.replace(/\s/g, '')) {
+      return Alert.alert('Invalid name', 'Participant name cannot be empty.');
+    }
+
+    setParticipants((prevState) => [...prevState, participantName]);
+    setParticipantName('');
   }
 
   function handleParticipantRemove(name: string) {
     Alert.alert('Remove', `Do you want to remove the participant ${name}?`, [
       {
         text: 'Yes',
-        onPress: () => console.log(`You removed the participant ${name}`),
+        onPress: () =>
+          setParticipants((prevState) =>
+            prevState.filter((participant) => participant !== name)
+          ),
       },
       {text: 'no', style: 'cancel'},
     ]);
@@ -54,9 +51,11 @@ export default function Home() {
 
       <View style={styles.form}>
         <TextInput
-          style={styles.input}
           placeholder="Participant name"
           placeholderTextColor="#6B6B6B"
+          value={participantName}
+          onChangeText={setParticipantName}
+          style={styles.input}
         />
 
         <TouchableOpacity
@@ -70,7 +69,7 @@ export default function Home() {
 
       <FlatList
         data={participants}
-        keyExtractor={(item, index) => `${index}-${item}`}
+        keyExtractor={(item) => `${item}`}
         renderItem={({item}) => (
           <Participant
             name={item}
@@ -82,6 +81,7 @@ export default function Home() {
             No one has arrived the event yet? Add participants to your list
           </Text>
         )}
+        showsVerticalScrollIndicator={false}
       />
     </View>
   );
